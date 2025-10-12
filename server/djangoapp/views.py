@@ -35,9 +35,9 @@ def login_user(request):
 
 # ---------------------- LOGOUT ----------------------
 def logout_request(request):
-    logger.info(f"User {request.user.username} logged out.")
+   
     logout(request)
-    data = {"message": "Logged out successfully"}
+    data = {"userName": ""}
     return JsonResponse(data)
 
 # ---------------------- REGISTRATION ----------------------
