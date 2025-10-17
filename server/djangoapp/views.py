@@ -5,8 +5,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.views.decorators.csrf import csrf_exempt
 from .restapis import get_request, analyze_review_sentiments, post_review
+from .models import CarMake, CarModel
 import json
 import logging
+from .populate import initiate
 
 logger = logging.getLogger(__name__)
 
@@ -88,3 +90,34 @@ def add_review(request):
     except Exception as e:
         print("Error posting review:", e)
         return JsonResponse({"status": 401, "message": "Error in posting review"})
+def get_cars(request):
+    print("=== get_cars view called ===")  # Debug
+    
+    # Check if we have car makes in the database
+    count = CarMake.objects.filter().count()
+    print(f"CarMake count: {count}")  # Debug
+    
+    # If no car makes exist, populate the database
+    if count == 0:
+        print("No car makes found. Calling initiate()...")  # Debug
+        initiate()
+    else:
+        print("Car makes already exist in database")  # Debug
+    
+    # Now query for cars
+    cars = CarModel.objects.select_related('car_make').all()
+    print(f"Found {cars.count()} car models")  # Debug
+    
+    cars_dict = []
+    
+    for car in cars:
+        cars_dict.append({
+            "CarModel": car.name,
+            "CarMake": car.car_make.name,
+            "Year": car.year,
+            "Type": car.type,
+            "DealerId": car.dealer_id,
+        })
+    
+    print(f"Returning {len(cars_dict)} cars")  # Debug
+    return JsonResponse({"CarModels": cars_dict})

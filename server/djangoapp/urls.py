@@ -15,7 +15,7 @@ urlpatterns = [
     path('get_dealers/<str:state>', views.get_dealerships, name='get_dealers_by_state'),
     path('reviews/dealer/<int:dealer_id>', views.get_dealer_reviews, name='dealer_details'),
     path('add_review', views.add_review, name='add_review'),
-
+    path(route='get_cars', view=views.get_cars, name ='getcars'),
     # Frontend React page serving
     path('login/', TemplateView.as_view(template_name="index.html"), name='frontend_login'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
